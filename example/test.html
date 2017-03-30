@@ -22,9 +22,17 @@
 // });
 
 
-function forEach(array, callback){
+function forEach(array, callback, configurableThisObject){
+	var forEachCallback = callback;
+	// if configurable this object exist
+	if (configurableThisObject) {
+		// Want to bind configurableThisObject to the callback function
+		forEachCallback = callback.bind(configurableThisObject)
+
+	}
+
 	for (var i = 0; i < array.length; i++) {
-		callback(array[i], i, array);
+		forEachCallback(array[i], i, array);
 	}
 };
 
@@ -52,6 +60,13 @@ tests({
 		forEach(testArray, function(number, index, originalArray) {
 			eq(testArray, originalArray);
 		});
+	},
+	'it should accept a configureable this object': function() {
+		forEach([1], function() {
+			// Inside of here, this should be equal to configurableThisObject.
+			// this.description shuld be equal to 'Configurable this object'
+			eq(this.description, 'I am a configurable this object');
+		}, {description: 'I am a configurable this object'});
 	}
 });
 </script>
