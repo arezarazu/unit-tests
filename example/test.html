@@ -1,6 +1,8 @@
 <script src="../tinytest.js"></script>
 <script>
 
+// Simple unit testing for custom forEach-function
+
 // Example 1
 // forEach([1, 2, 3], function() {
 // 	console.log('Hi');
@@ -22,28 +24,25 @@
 // });
 
 
-function forEach(array, callback, configurableThisObject){
+function forEach(array, callback, optionalThisObject){
 	var forEachCallback = callback;
 	// if configurable this object exist
-	if (configurableThisObject) {
-		// Want to bind configurableThisObject to the callback function
-		forEachCallback = callback.bind(configurableThisObject)
-
+	if (optionalThisObject) {
+		// Want to bind optionalThisObject to the callback function
+		forEachCallback = callback.bind(optionalThisObject)
 	}
-
 	for (var i = 0; i < array.length; i++) {
 		forEachCallback(array[i], i, array);
 	}
 };
 
 tests({
-
 	'it should run the callback function array.length times': function(){
-		var counter = 0;
+		var numberOfTimesCallbackHasRun = 0;
 		forEach([1, 2, 3], function() {
-			counter++;
+			numberOfTimesCallbackHasRun++;
 		});
-		eq(counter, 3);
+		eq(numberOfTimesCallbackHasRun, 3);
 	},
 	'it should pass in the ith element as the first argument to the callback': function(){
 		forEach([1], function(number) {
@@ -61,12 +60,10 @@ tests({
 			eq(testArray, originalArray);
 		});
 	},
-	'it should accept a configureable this object': function() {
+	'it should accept a optional this object': function() {
 		forEach([1], function() {
-			// Inside of here, this should be equal to configurableThisObject.
-			// this.description shuld be equal to 'Configurable this object'
-			eq(this.description, 'I am a configurable this object');
-		}, {description: 'I am a configurable this object'});
+			eq(this.description, 'I should be accesible inside the callback funciton');
+		}, {description: 'I should be accesible inside the callback funciton'});
 	}
 });
 </script>
